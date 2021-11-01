@@ -69,41 +69,14 @@ class Resque
      */
     public static function redis()
     {
-        // Detect when the PID of the current process has changed (from a fork, etc)
-        // and force a reconnect to redis.
-        $pid = getmypid();
-        if (self::$pid !== $pid) {
-            self::$redis = null;
-            self::$pid = $pid;
-        }
-
-        if (!is_null(self::$redis)) {
+        if (self::$redis !== null) {
             return self::$redis;
         }
 
-        $server = self::$redisServer;
-        if (empty($server)) {
-            $server = 'localhost:6379';
-        }
-
-        if (is_array($server)) {
-            require_once dirname(__FILE__) . '/Resque/RedisCluster.php';
-            self::$redis = new Resque_RedisCluster($server);
+        if (is_callable(self::$redisServer)) {
+            self::$redis = call_user_func(self::$redisServer, self::$redisDatabase);
         } else {
-            if (strpos($server, 'unix:') === false) {
-                list($host, $port) = explode(':', $server);
-            } else {
-                $host = $server;
-                $port = null;
-            }
-            require_once dirname(__FILE__) . '/Resque/Redis.php';
-            $redisInstance = new Resque_Redis($host, $port, self::$password);
-            $redisInstance->prefix(self::$namespace);
-            self::$redis = $redisInstance;
-        }
-
-        if (!empty(self::$redisDatabase)) {
-            self::$redis->select(self::$redisDatabase);
+            self::$redis = new Resque_Redis(self::$redisServer, self::$redisDatabase);
         }
 
         return self::$redis;

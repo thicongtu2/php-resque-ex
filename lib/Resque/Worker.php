@@ -522,7 +522,8 @@ class Resque_Worker
     public function registerWorker()
     {
         Resque::redis()->sadd('workers', (string)$this);
-        Resque::redis()->set('worker:' . (string)$this . ':started', strftime('%a %b %d %H:%M:%S %Z %Y'));
+        // convert to timestamp
+        Resque::redis()->set('worker:' . (string)$this . ':started', time());
     }
 
     /**
@@ -556,7 +557,8 @@ class Resque_Worker
         $data = json_encode(
             array(
                 'queue' => $job->queue,
-                'run_at' => strftime('%a %b %d %H:%M:%S %Z %Y'),
+                // convert to timestamp
+                'run_at' => time(),
                 'payload' => $job->payload
             )
         );
