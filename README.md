@@ -4,6 +4,11 @@ Php-Resque-ex: Resque for PHP [![Build Status](https://secure.travis-ci.org/wa0x
 Resque is a Redis-backed library for creating background jobs, placing
 those jobs on multiple queues, and processing them later.
 
+## Note ##
+cause of some bug not easy to fix, i change some code of this library then push to packaegist to use on my project.
+1. I don't have php-redis, and Redisent is not work
+2. I want to change the format of datetime, cause of my dashboard can not read this dateformat
+
 ## Background ##
 
 Php-Resque-Ex is a fork of [php-resque](https://github.com/chrisboulton/php-resque) by chrisboulton. See the [original README](https://github.com/chrisboulton/php-resque/blob/master/README.md) for more informations.
